@@ -32,7 +32,7 @@ class User extends CI_Controller {
 		$this->load->helper('download');
 
 		$this->load->model("UserModel");
-
+		$this->load->model("CodeModel");
 	}
 
 	public function index(){
