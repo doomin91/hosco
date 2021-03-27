@@ -82,6 +82,8 @@
 							</div>
 						</div>
 
+						<textarea name="webitor" id="webditor" row="10" cols="100"></textarea>
+
 					</div>
 				  <!-- /tile body -->
 
@@ -110,7 +112,18 @@
 		include_once dirname(__DIR__)."/admin-footer.php";
 	?>
 	
+	<script type="text/javascript" src="/js/smarteditor/js/service/HuskyEZCreator.js" charset="utf-8"></script>
+
 <script>
+
+	var oEditors = [];
+	nhn.husky.EZCreator.createInIFrame({
+		oAppRef: oEditors,
+		elPlaceHolder: "weditor",
+		sSkinURI: "/js/SmartEditor2Skin.html",
+		fCreator: "createSEditor2"
+	});
+
 	function post_regist(){
 		let form = $("#post_write_form").serializeArray();
 		let board_seq = <?php echo $BOARD_INFO->BOARD_SEQ?>;
