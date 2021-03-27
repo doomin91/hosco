@@ -61,14 +61,23 @@
 								<col width="35%"/>
 							</colgroup>
 							<tbody>
+								<input type="hidden" name="post_seq" value="<?php echo $POST_INFO->POST_SEQ ?>">
 								<input type="hidden" name="board_seq" value="<?php echo $BOARD_INFO->BOARD_SEQ ?>">
 								<tr>
 									<td>제목</td>
-									<td><input type="text" name="post_subject" styel="width:100%"></td>
+									<td><?php echo $POST_INFO->POST_SUBJECT;?></td>
 								</tr>
 								<tr>
 									<td>내용</td>
-									<td><textarea type="text" name="post_contents"></textarea></td>
+									<td><?php echo $POST_INFO->POST_CONTENTS;?></td>
+								</tr>
+								<tr>
+									<td>글쓴이</td>
+									<td><?php echo $POST_INFO->USERNAME;?></td>
+								</tr>
+								<tr>
+									<td>작성일자</td>
+									<td><?php echo $POST_INFO->POST_REG_DATE;?></td>
 								</tr>
 
 							</tbody>
@@ -76,9 +85,9 @@
 
 						<div class="row form-footer">
 							<div class="col-sm-offset-2 col-sm-10 text-right">
-								<button type="button" class="btn btn-default btn-sm" onclick="post_regist()">등록</button>
+								<button type="button" class="btn btn-primary btn-sm" id="btnRecommand">추천</button>
+								<a href="/admin/board/post_list/<?php echo $BOARD_INFO->BOARD_SEQ?>" class="btn btn-primary btn-sm">수정</a>
 								<a href="/admin/board/post_list/<?php echo $BOARD_INFO->BOARD_SEQ?>" class="btn btn-primary btn-sm">목록</a>
-
 							</div>
 						</div>
 
@@ -111,6 +120,23 @@
 	?>
 	
 <script>
+	let post_seq = $("input[name=post_seq]").val();
+
+	$("#btnRecommand").click(function(){
+		$.ajax({
+			url:"/admin/board/post_recommand?post_seq=" + post_seq,
+			type:"get",
+			dataType:"json",
+			success:function(resultMsg){
+				let code = resultMsg["code"];
+				let msg = resultMsg["msg"];
+				alert(msg);
+			}, error:function(e){
+				console.log(e);
+			}
+		})
+	});
+
 	function post_regist(){
 		let form = $("#post_write_form").serializeArray();
 		let board_seq = <?php echo $BOARD_INFO->BOARD_SEQ;?>;

@@ -48,47 +48,72 @@
 			  <!-- col 6 -->
 			  <div class="col-md-12">
 				<!-- tile -->
-				<section class="tile color transparent-black">
+				
+                <section class="tile color transparent-black">
 
-					<!-- tile body -->
-					<div class="tile-body">
-						<form id="post_write_form">
-						<table class="table table-custom dataTable userTable">
-							<colgroup>
-								<col width="15%"/>
-								<col width="35%"/>
-								<col width="15%"/>
-								<col width="35%"/>
-							</colgroup>
-							<tbody>
-								<input type="hidden" name="board_seq" value="<?php echo $BOARD_INFO->BOARD_SEQ ?>">
-								<tr>
-									<td>제목</td>
-									<td><input type="text" name="post_subject" styel="width:100%"></td>
-								</tr>
-								<tr>
-									<td>내용</td>
-									<td><textarea type="text" name="post_contents"></textarea></td>
-								</tr>
+                    <!-- tile body -->
+                    <div class="tile-body">
 
-							</tbody>
-						</table>
+                        <form class="form-horizontal" role="form" id="post_write_form">
+                            
+                            <div class="form-group">
+                                <label for="input01" class="col-sm-2 control-label">게시글 제목</label>
+                                <div class="col-sm-10">
+                                    <input type="text" class="form-control" id="post_title" name="post_title" placeholder="제목을 입력해주세요">
+                                </div>
+                            </div>
+                            
+                            <div class="form-group transparent-editor">
+                                <label class="col-sm-2 control-label">게시글 내용</label>
+                                <div class="col-sm-10">
+                                    <textarea name="post_contents" id="post_contents"></textarea>
+                                </div>
+                            </div>
 
-						<div class="row form-footer">
-							<div class="col-sm-offset-2 col-sm-10 text-right">
-								<button type="button" class="btn btn-default btn-sm" onclick="post_regist()">등록</button>
-								<a href="/admin/board/post_list/<?php echo $BOARD_INFO->BOARD_SEQ?>" class="btn btn-primary btn-sm">취소</a>
+							<?php
+							for($i = 0 ; $i < $BOARD_INFO->BOARD_FILEUPLOAD_COUNT; $i++){?>
+                            <div class="form-group">
+                                <label for="input01" class="col-sm-2 control-label">첨부파일<?php echo ($i+1)?></label>
+                                <div class="col-sm-6">
+                                    <input type="file" class="form-control" ID="post_file_name<?php echo ($i+1)?>" name="post_file_name<?php echo ($i+1)?>">
+                                </div>
+                                <!-- <div class="col-sm-4" style="font-size:12px">* 한글파일명은 사용할수 없습니다.</div> -->
+                            </div>
+							<?php }
+							?>
 
-							</div>
-						</div>
+							<div class="form-group transparent-editor">
+                                <label class="col-sm-2 control-label">공지사항</label>
+                                <div class="col-sm-10">
+                                    <div>
+										<input class="input" type="checkbox" name="post_notice_chk" value="Y">
+									</div>
+                                </div>
+                            </div>
 
-						<textarea name="webitor" id="webditor" row="10" cols="100"></textarea>
+							<div class="form-group transparent-editor">
+                                <label class="col-sm-2 control-label">비밀글</label>
+                                <div class="col-sm-10">
+                                    <div>
+										<input class="input" type="checkbox" name="post_secret_chk" value="Y">
+									</div>
+                                </div>
+                            </div>
 
-					</div>
-				  <!-- /tile body -->
+                            <div class="form-group form-footer">
+                                <div class="col-sm-offset-2 col-sm-10">
+                                    <button type="button" class="btn btn-primary" onclick="post_regist()">등록</button>
+                                    <a href="/admin/board/post_list/<?php echo $BOARD_INFO->BOARD_SEQ;?>" class="btn btn-default">취소</a>
+                                </div>
+                            </div>
+							
 
-				</section>
-				<!-- /tile -->
+                        </form>
+                    </div>
+                  <!-- /tile body -->
+
+                </section>
+
 
 			  </div>
 			  <!-- /col 12 -->
@@ -111,25 +136,20 @@
 	<?php
 		include_once dirname(__DIR__)."/admin-footer.php";
 	?>
-	
-	<script type="text/javascript" src="/js/smarteditor/js/service/HuskyEZCreator.js" charset="utf-8"></script>
 
-<script>
-
-	var oEditors = [];
-	nhn.husky.EZCreator.createInIFrame({
-		oAppRef: oEditors,
-		elPlaceHolder: "weditor",
-		sSkinURI: "/js/SmartEditor2Skin.html",
-		fCreator: "createSEditor2"
-	});
+	<script>
+    $(document).ready( function() {
+        CKEDITOR.replace( 'post_contents' );	
+	})
 
 	function post_regist(){
-		let form = $("#post_write_form").serializeArray();
 		let board_seq = <?php echo $BOARD_INFO->BOARD_SEQ?>;
+		$("#post_contents").val(CKEDITOR.instances.post_contents.getData());
+		let form = $("#post_write_form").serializeArray();
+
 		console.log(form);
 		$.ajax({
-			url:"/admin/board/post_regist",
+			url:"/admin/board/post_regist?board_seq=" + board_seq,
 			type:"post",
 			data:form,
 			dataType:"json",
