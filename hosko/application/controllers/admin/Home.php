@@ -31,7 +31,7 @@ class Home extends CI_Controller {
 		//$this->load->library('encrypt');
 		$this->load->helper('download');
 
-		$this->load->model("adminModel");
+		//$this->load->model("adminModel");
 
 	}
 

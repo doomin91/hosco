@@ -70,7 +70,7 @@
 
 		$.ajax({
 			type : "POST",
-			url : "/administrator/home/login_proc",
+			url : "/admin/home/login_proc",
 			dataType : "JSON",
 			data : {
 				"admin_id" : admin_id,

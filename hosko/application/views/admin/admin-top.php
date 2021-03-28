@@ -59,12 +59,12 @@
 			  </a>
 			</li>
 			<li>
-			  <a href="/administrator/en/press">
+			  <a href="/admin/basic/managers">
 				<i class="fa fa-caret-right"></i> 사이트정보
 			  </a>
 			</li>
 			<li>
-			  <a href="/administrator/en/award">
+			  <a href="/admin/basic/managers">
 				<i class="fa fa-caret-right"></i> 관리자 설정
 			  </a>
 			</li>
@@ -87,7 +87,7 @@
 			</a>
 			<ul class="dropdown-menu">
 				<li>
-					<a href="/administrator/en/notice">
+					<a href="/admin/user">
 						<i class="fa fa-caret-right"></i> 회원목록
 					</a>
 				</li>
@@ -226,7 +226,7 @@
 					</a>
 				</li>
 			</ul>
-			
+
 		</li>
 
 	  </ul>
