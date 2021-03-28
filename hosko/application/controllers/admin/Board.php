@@ -149,33 +149,81 @@ class Board extends CI_Controller {
 	///////////////////////
 	
 	public function post_list($BOARD_SEQ){
-		$DATA["BOARD_INFO"] = $this->BoardModel->getBoard($BOARD_SEQ);
-		$DATA["LIST"] = $this->BoardModel->getPosts($BOARD_SEQ);
-		$DATA["LIST_CNT"] = $this->BoardModel->getPostsCnt($BOARD_SEQ);
+		$BOARD_INFO = $this->BoardModel->getBoard($BOARD_SEQ);
+		$searchField = $this->input->get("searchField");
+		$searchString = $this->input->get("searchString");
+		
+		$limit = $BOARD_INFO->BOARD_LIST_COUNT;
+        $nowpage = "";
+        if (!isset($_GET["per_page"])){
+            $start = 0;
+        }else{
+            $start = ($_GET["per_page"]-1)*$limit;
+            $nowpage = $_GET["per_page"];
+        }
+
+        $wheresql = array(
+						"searchField" => $searchField,
+                        "searchString" => $searchString,
+                        "start" => $start,
+                        "limit" => $limit
+                        );
+
+        $lists = $this->BoardModel->getPosts($BOARD_SEQ, $wheresql);
+        //echo $this->db->last_query();
+        $listCount = $this->BoardModel->getPostsCnt($BOARD_SEQ, $wheresql);
+        if ($nowpage != ""){
+            $pagenum = $listCount-(($nowpage-1)*$limit);
+        }else{
+            $pagenum = $listCount;
+        }
+
+        $queryString = "?searchField=". $searchField. "&searchString=".$searchString;
+        $pagination = $this->customclass->pagenavi("/admin/board/post_list/$BOARD_SEQ".$queryString, $listCount, $limit, 3, $nowpage);
+
+		$DATA["LIST"] = $lists;
+		$DATA["LIST_CNT"] = $listCount;
+		$DATA["BOARD_INFO"] = $BOARD_INFO;
+		$DATA["searchField"] = $searchField;
+        $DATA["searchString"] = $searchString;
+        $DATA["lists"] = $lists;
+        $DATA["listCount"] = $listCount;
+        $DATA["pagination"] = $pagination;
+        $DATA["pagenum"] = $pagenum;
+        $DATA["start"] = $start;
+        $DATA["limit"] = $limit;
 
 		$this->load->view("./admin/board/post-list", $DATA);
 	}
 	
 	public function post_view($POST_SEQ){
-		$POST_INFO = $this->BoardModel->getPosts($POST_SEQ);
-		
-		$DATA["BOARD_INFO"] = $this->BoardModel->getBoard($POST_INFO->BOARD_SEQ);
+
+		$POST_INFO = $this->BoardModel->getBoardSeqByPost($POST_SEQ);
+
+		$DATA = array(
+			"POST_VIEW_CNT"	=> $POST_INFO->POST_VIEW_CNT + 1
+		);
+
+		$this->BoardModel->addPostViewCnt($POST_SEQ, $DATA);
+
+		$DATA["BOARD_INFO"] = $this->BoardModel->getBoard($POST_INFO->POST_BOARD_SEQ);
 		$DATA["POST_INFO"] = $POST_INFO;
+		// $DATA["POST_INFO"] = $POST_INFO;
 		$this->load->view("./admin/board/post-view", $DATA);
 	}
 
 	public function post_write($BOARD_SEQ){
 		$DATA["BOARD_INFO"] = $this->BoardModel->getBoard($BOARD_SEQ);
-		$DATA["LIST"] = $this->BoardModel->getPosts($BOARD_SEQ);
-		$DATA["LIST_CNT"] = $this->BoardModel->getPostsCnt($BOARD_SEQ);
 
 		$this->load->view("./admin/board/post-write", $DATA);
 	}
 
 	public function post_regist(){
-		$BOARD_SEQ = $this->input->post("board_seq");
-		$POST_SUBJECT = $this->input->post("post_subject");
+		$BOARD_SEQ = $this->input->get("board_seq");
+		$POST_SUBJECT = $this->input->post("post_title");
 		$POST_CONTENTS = $this->input->post("post_contents");
+		$POST_NOTICE_CHK = $this->input->post("post_notice_chk");
+		$POST_SECRET_CHK = $this->input->post("post_secret_chk");
 
 		$BOARD_INFO = $this->BoardModel->getBoard($BOARD_SEQ);
 
@@ -188,13 +236,52 @@ class Board extends CI_Controller {
 			exit;
 		}
 
+        $config["upload_path"] = $_SERVER['DOCUMENT_ROOT'] . "/upload/attach/";
+        $config["allowed_types"] = "xls|xlsx|ppt|pptx|gif|jpg|png|hwp|doc|bmp|jpeg|zip|GIF|JPG|PNG|JPEG";
+        $new_name = $BOARD_INFO->BOARD_NAME . "_" . date("YmdHis");
+        $config["file_name"] = $new_name;
+        $this->load->library("upload", $config);
+		
+        $post_file_name = "";
+        $post_file_path = "";
+        if (isset($_FILES['post_file_name']['name'])) {
+            if (0 < $_FILES['post_file_name']['error']) {
+                echo 'Error during file upload' . $_FILES['post_file_name']['error'];
+            } else {
+                if (file_exists('upload/attach' . $_FILES['post_file_name']['name'])) {
+                    echo 'File already exists : upload/attach' . $_FILES['post_file_name']['name'];
+                } else {
+                    $this->load->library('upload', $config);
+                    if (!$this->upload->do_upload('post_file_name')) {
+                        echo $this->upload->display_errors();
+                    } else {
+                        //echo 'File successfully uploaded : uploads/' . $_FILES['post_thumbnail']['name'];
+                        $post_file_name = $_FILES['post_file_name']['name'];
+                        $post_file_path = "/upload/attach/".$this->upload->data("file_name");
+                    }
+                }
+            }
+        } else {
+            //echo 'Please choose a file';
+        }
+
+        $insert_arr = array(
+			"ATTACH_POST_SEQ" => $BOARD_SEQ,
+			"ATTACH_FILE_NAME" => $post_file_name,
+			"ATTACH_FILE_PATH" => $post_file_path
+		);
+
+		$result = $this->BoardModel->insertPostAttach($insert_arr);
+
 		$DATA = array(
 			"POST_BOARD_SEQ" => $BOARD_SEQ,
 			"POST_ADMIN_SEQ" => $BOARD_INFO->BOARD_ADMIN_ID,
 			"POST_USER_SEQ" => $this->session->userdata("USER_SEQ"),
 			"POST_SUBJECT" => $POST_SUBJECT,
 			"POST_CONTENTS" => $POST_CONTENTS,
-			"POST_REG_IP" => $this->customclass->get_client_ip()
+			"POST_REG_IP" => $this->customclass->get_client_ip(),
+			"POST_NOTICE_YN" => isset($POST_NOTICE_CHK) ? "Y" : "N",
+			"POST_SECRET_YN" => isset($POST_SECRET_CHK) ? "Y" : "N"
 		);
 
 		$result = $this->BoardModel->setPost($DATA);
@@ -211,7 +298,32 @@ class Board extends CI_Controller {
 		}
 
 		echo json_encode($returnMsg);
+	}
 
+	public function post_recommand(){
+		$POST_SEQ = $this->input->get("post_seq");
+		$USER_SEQ = 1;
+		$chk = $this->BoardModel->getPostRecommand($USER_SEQ, $POST_SEQ);
+
+		if(!$chk){
+			$DATA = array(
+				"RMD_USER_SEQ" => 1,
+				"RMD_POST_SEQ" => $POST_SEQ,
+			);
+			$this->BoardModel->setPostRecommand($DATA);
+			$resultMsg = array(
+				"code" => 200,
+				"msg" => "추천되었습니다."
+			);
+		} else {
+			$this->BoardModel->delPostRecommand($chk->RMD_SEQ);
+			$resultMsg = array(
+				"code" => 201,
+				"msg" => "추천 취소되었습니다."
+			);
+		}
+
+		echo json_encode($resultMsg);
 	}
 
 	

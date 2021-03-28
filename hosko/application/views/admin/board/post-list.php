@@ -48,24 +48,21 @@
 
 			<div class="row">
 
-
 <!-- col 12 -->
-<div class="col-md-12">
-                
-                
+			<div class="col-md-12">
                 <!-- tile -->
+
                 <section class="tile transparent">
 
                   <!-- tile body -->
                   <div class="tile-body color transparent-black rounded-corners">
-                    
                     <div class="table-responsive">
                       <table  class="table table-datatable table-custom">
                         <thead>
                           <tr>
                             <th class="sort-numeric">No</th>
                             <th class="sort">제목</th>
-							<th class="sort">등록자</th>
+							<th class="sort">글쓴이</th>
 							<th class="sort">조회수</th>
 							<?php
 							// 추천 표시
@@ -84,12 +81,19 @@
                         <tbody id="boardItems">
 
 							<?php 
-							$pagenum = $LIST_CNT;
 							foreach($LIST as $lt):?>
 							<tr style="cursor:pointer;" onclick="viewPost(<?php echo $lt->POST_SEQ?>);">
-								<td><?php echo $pagenum?></td>
-								<td><?php echo $lt->POST_SUBJECT?>
-
+								<td><?php 
+								if($lt->POST_NOTICE_YN == 'Y'){
+									echo "<span style=\"color:red;\">[공지]</span> ";
+								} else {
+									echo $pagenum;
+								}
+									?>	
+								
+								</td>
+								<td><?php 
+									echo $lt->POST_SUBJECT?>
 								<?php
 								// 댓글 기능
 								if($BOARD_INFO->BOARD_COMMENT_FLAG == 'Y'):?>
@@ -98,12 +102,12 @@
 								endif;
 								?>
 								</td>
-								<td><?php echo $lt->POST_USER_SEQ?></td>
+								<td><?php echo $lt->USERNAME?></td>
 								<td><?php echo $lt->POST_VIEW_CNT?></td>
 								<?php 
 								// 추천 표시
 								if($BOARD_INFO->BOARD_RECOMMAND_FLAG == 'Y'):?>
-								<td><?php ?>추천표시</td>
+								<td><?php ?><?php echo $lt->CNT?></td>
 								<?php endif;?>
 								<td><?php echo $lt->POST_REG_DATE?></td>
 								<?php 
@@ -112,17 +116,69 @@
 								<td class="sort"><button class="btn btn-xs btn-danger">삭제</button></td>
 								<?php endif;?>
 							</tr>
-							<?php endforeach;
-							$pagenum -= 1;
+							<?php 
+							$pagenum -= 1;	
+							endforeach;
 							?>
 
                         </tbody>
                       </table>
 					  
+
+					<div class="row">
+					  <div class="col-md-4 sm-center">
+                                    <div class="dataTables_info">
+                                    <?php if ($listCount > 0) :
+                                        $end = ($start+$limit)-1;
+                                        if ($end > $listCount) $end = $listCount;
+                                        if ($start == 0) $start = 1;
+                                    ?>
+                                        전체 <?php echo $listCount; ?>개 중 <?php echo $listCount-$start; ?> - <?php echo $listCount-$end == 0 ? "1" : $listCount-$end ?>
+                                    <?php endif; ?>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 text-center sm-center">
+                                    <div class="dataTables_paginate paging_bootstrap paging_custombootstrap">
+                                        <?php echo $pagination; ?>
+                                    </div>
+	                    </div>
+					</div>
+
                     </div>
                   </div>
                   <!-- /tile body -->
+
+				  
                 </section>
+
+				<form method="get" role="form" id="sform" class="form-horizontal">
+
+                <section class="tile transparent">
+                  <div class="tile-body color transparent-black rounded-corners" >
+                    <div class="form-group ">
+                      <label for="apply_title" class="col-sm-2 control-label">게시글 검색</label>
+                      <div class="col-sm-2">
+                        <select name="searchField" class="form-control">
+						  <option value="">선택</option>
+						  <option value="subject" <?php echo $searchField == "subject" ? 'selected': ""?>>제목</option>
+						  <option value="username" <?php echo $searchField == "username" ? 'selected': ""?>>글쓴이</option>
+                        </select>
+                      </div>
+                      <div class="col-sm-6">
+                        <div class="input-group">
+                        <input type="text" name="searchString" class="form-control" value="<?php echo $searchString; ?>" style="z-index:1;">
+                          <span class="input-group-btn">
+                            <button type="submit" class="btn btn-primary">검색</button>
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+
+				</form>
+
+
                 <!-- /tile -->
 					<div style="text-align:right" id="menu">
 						<a href="/admin/board/post_write/<?php echo $BOARD_INFO->BOARD_SEQ?>" class="btn btn-success">게시글 작성</a>
@@ -151,5 +207,4 @@
 	function viewPost(POST_SEQ){
 		location.href="/admin/board/post_view/" + POST_SEQ;
 	}
-
 </script>
