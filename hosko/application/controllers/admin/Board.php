@@ -203,8 +203,11 @@ class Board extends CI_Controller {
 		$DATA = array(
 			"POST_VIEW_CNT"	=> $POST_INFO->POST_VIEW_CNT + 1
 		);
-
 		$this->BoardModel->addPostViewCnt($POST_SEQ, $DATA);
+
+		
+		$DATA["COMMENTS"] = $this->BoardModel->getComments($POST_SEQ);
+		$DATA["RECOMMAND"] = $this->BoardModel->getRecommand($POST_SEQ);
 
 		$DATA["BOARD_INFO"] = $this->BoardModel->getBoard($POST_INFO->POST_BOARD_SEQ);
 		$DATA["POST_INFO"] = $POST_INFO;
@@ -224,8 +227,23 @@ class Board extends CI_Controller {
 		$POST_CONTENTS = $this->input->post("post_contents");
 		$POST_NOTICE_CHK = $this->input->post("post_notice_chk");
 		$POST_SECRET_CHK = $this->input->post("post_secret_chk");
+		$SPAM_CHECK = $this->rpHash($this->input->post("defaultReal"));
+		$SPAM_CHECK_HASH = $this->input->post("defaultRealHash");
+		
+
 
 		$BOARD_INFO = $this->BoardModel->getBoard($BOARD_SEQ);
+
+		if($BOARD_INFO->BOARD_SPAM_CHECK_FLAG == 'Y'){
+			if($SPAM_CHECK != $SPAM_CHECK_HASH){
+				$returnMsg = array(
+					"code" => 202,
+					"msg" => "자동입력방지 값이 다릅니다."
+				);
+				echo json_encode($returnMsg);
+				exit;
+			}
+		}
 
 		if(empty($POST_SUBJECT) || empty($POST_CONTENTS)){
 			$returnMsg = array(
@@ -326,5 +344,44 @@ class Board extends CI_Controller {
 		echo json_encode($resultMsg);
 	}
 
-	
+	public function comment_regist(){
+		$POST_SEQ = $this->input->post("post_seq");
+		$COMMENT = $this->input->post("comment_content");
+
+		$DATA = array(
+			"COM_POST_SEQ" => $POST_SEQ,
+			"COM_USER_SEQ" => 1,
+			"COM_CONTENTS" => $COMMENT
+		);
+
+		$result = $this->BoardModel->setComment($DATA);
+
+		echo json_encode($result);
+	}
+
+	function rpHash($value) { 
+		$hash = 5381; 
+		$value = strtoupper($value); 
+		for($i = 0; $i < strlen($value); $i++) { 
+			$hash = ($this->leftShift32($hash, 5) + $hash) + ord(substr($value, $i)); 
+		} 
+		return $hash; 
+	} 
+	 
+	// Perform a 32bit left shift 
+	function leftShift32($number, $steps) { 
+		// convert to binary (string) 
+		$binary = decbin($number); 
+		// left-pad with 0's if necessary 
+		$binary = str_pad($binary, 32, "0", STR_PAD_LEFT); 
+		// left shift manually 
+		$binary = $binary.str_repeat("0", $steps); 
+		// get the last 32 bits 
+		$binary = substr($binary, strlen($binary) - 32); 
+		// if it's a positive number return it 
+		// otherwise return the 2's complement 
+		return ($binary{0} == "0" ? bindec($binary) : 
+			-(pow(2, 31) - bindec(substr($binary, 1)))); 
+	} 
+
 }

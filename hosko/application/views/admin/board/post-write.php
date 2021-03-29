@@ -91,7 +91,9 @@
                                 </div>
                             </div>
 
+							<?php if($BOARD_INFO->BOARD_SECRET_FLAG == 'Y'): ?>
 							<div class="form-group transparent-editor">
+								
                                 <label class="col-sm-2 control-label">비밀글</label>
                                 <div class="col-sm-10">
                                     <div>
@@ -99,6 +101,20 @@
 									</div>
                                 </div>
                             </div>
+							<?php endif; ?>
+								
+							<?php if($BOARD_INFO->BOARD_SPAM_CHECK_FLAG == 'Y'): ?>
+							<div class="form-group">
+								
+								<div class="col-sm-offset-2 col-sm-6" style="background:#FFEFBA;max-width:350px;">
+									<p><label class="label label-waning" style="color:#000;">Please enter the letters displayed:</label>
+										<input type="hidden" id="defaultRealHash" name="defaultRealHash" value="">
+										<input type="text" id="defaultReal" name="defaultReal" placeholder="문자를 입력해주세요." style="color:#000;"></p>
+								</div>
+
+							</div>
+							<?php endif; ?>
+							
 
                             <div class="form-group form-footer">
                                 <div class="col-sm-offset-2 col-sm-10">
@@ -136,15 +152,28 @@
 	<?php
 		include_once dirname(__DIR__)."/admin-footer.php";
 	?>
+<link rel="stylesheet" type="text/css" href="/js/captcha/jquery.realperson.css"> 
+<script type="text/javascript" src="/js/captcha/jquery.plugin.js"></script> 
+<script type="text/javascript" src="/js/captcha/jquery.realperson.js"></script>
 
 	<script>
-    $(document).ready( function() {
-        CKEDITOR.replace( 'post_contents' );	
+		
+		
+	$(document).ready( function() {
+		$("#post_contents").Editor();
+		$("#defaultReal").realperson();
 	})
 
+
 	function post_regist(){
+
+		let hash = $("#defaultReal").realperson('getHash');
+		console.log(hash);
+
 		let board_seq = <?php echo $BOARD_INFO->BOARD_SEQ?>;
-		$("#post_contents").val(CKEDITOR.instances.post_contents.getData());
+		
+		$("#defaultRealHash").val(hash);
+		$("#post_contents").val($("#post_contents").Editor("getText"));
 		let form = $("#post_write_form").serializeArray();
 
 		console.log(form);

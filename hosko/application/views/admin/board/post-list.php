@@ -1,6 +1,12 @@
 <?php
 	include_once dirname(__DIR__)."/admin-header.php";
 ?>
+
+<style>
+
+
+</style>
+
 <body class="bg-1">
 
 	<!-- Preloader -->
@@ -144,6 +150,32 @@
 	                    </div>
 					</div>
 
+					<div class="row">
+
+					<div class="form-group ">
+						<form method="get" role="form" id="sform" class="form-horizontal">
+
+						<label for="apply_title" class="col-sm-2 control-label">게시글 검색</label>
+						<div class="col-sm-2">
+							<select name="searchField" class="form-control">
+							<option value="">선택</option>
+							<option value="subject" <?php echo $searchField == "subject" ? 'selected': ""?>>제목</option>
+							<option value="username" <?php echo $searchField == "username" ? 'selected': ""?>>글쓴이</option>
+							</select>
+						</div>
+						<div class="col-sm-6">
+							<div class="input-group">
+							<input type="text" name="searchString" class="form-control" value="<?php echo $searchString; ?>" style="z-index:1;">
+							<span class="input-group-btn">
+								<button type="submit" class="btn btn-primary">검색</button>
+							</span>
+							</div>
+						</div>
+						</div>
+						</form>
+
+					</div>
+
                     </div>
                   </div>
                   <!-- /tile body -->
@@ -151,32 +183,6 @@
 				  
                 </section>
 
-				<form method="get" role="form" id="sform" class="form-horizontal">
-
-                <section class="tile transparent">
-                  <div class="tile-body color transparent-black rounded-corners" >
-                    <div class="form-group ">
-                      <label for="apply_title" class="col-sm-2 control-label">게시글 검색</label>
-                      <div class="col-sm-2">
-                        <select name="searchField" class="form-control">
-						  <option value="">선택</option>
-						  <option value="subject" <?php echo $searchField == "subject" ? 'selected': ""?>>제목</option>
-						  <option value="username" <?php echo $searchField == "username" ? 'selected': ""?>>글쓴이</option>
-                        </select>
-                      </div>
-                      <div class="col-sm-6">
-                        <div class="input-group">
-                        <input type="text" name="searchString" class="form-control" value="<?php echo $searchString; ?>" style="z-index:1;">
-                          <span class="input-group-btn">
-                            <button type="submit" class="btn btn-primary">검색</button>
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-
-				</form>
 
 
                 <!-- /tile -->

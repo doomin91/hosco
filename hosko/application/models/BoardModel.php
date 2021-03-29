@@ -105,5 +105,19 @@ class BoardModel extends CI_Model{
         return $this->db->delete("TBL_HOSKO_BOARD_RECOMMAND");
     }
 
+    public function getComments($POST_SEQ){
+        $this->db->where("COM_POST_SEQ", $POST_SEQ);
+        $this->db->join("TBL_HOSKO_USER", "COM_USER_SEQ = USER_SEQ", "LEFT");
+        return $this->db->get("TBL_HOSKO_BOARD_COMMENT")->result();
+    }
+
+    public function getRecommand($POST_SEQ){
+        $this->db->where("RMD_POST_SEQ", $POST_SEQ);
+        return $this->db->get("TBL_HOSKO_BOARD_RECOMMAND")->num_rows();
+    }
+
+    public function setComment($DATA){
+        return $this->db->insert("TBL_HOSKO_BOARD_COMMENT", $DATA);
+    }
 
 }
