@@ -59,7 +59,7 @@
                             <div class="form-group">
                                 <label for="input01" class="col-sm-2 control-label">게시글 제목</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="post_title" name="post_title" placeholder="제목을 입력해주세요">
+                                    <input type="text" class="form-control" id="post_title" name="post_title" placeholder="제목을 입력해주세요" value="<?php echo $POST_INFO->POST_SUBJECT?>">
                                 </div>
                             </div>
                             
@@ -86,7 +86,7 @@
                                 <label class="col-sm-2 control-label">공지사항</label>
                                 <div class="col-sm-10">
                                     <div>
-										<input class="input" type="checkbox" name="post_notice_chk" value="Y">
+										<input class="input" type="checkbox" name="post_notice_chk" value="Y" <?php echo $POST_INFO->POST_NOTICE_YN == 'Y'? 'checked' : ''?>>
 									</div>
                                 </div>
                             </div>
@@ -118,8 +118,8 @@
 
                             <div class="form-group form-footer">
                                 <div class="col-sm-offset-2 col-sm-10">
-                                    <button type="button" class="btn btn-primary" onclick="post_regist()">등록</button>
-                                    <a href="/admin/board/post_list/<?php echo $BOARD_INFO->BOARD_SEQ;?>" class="btn btn-default">취소</a>
+                                    <button type="button" class="btn btn-primary" onclick="post_modify()">수정</button>
+                                    <a href="/admin/board/post_view/<?php echo $POST_INFO->POST_SEQ;?>" class="btn btn-default">취소</a>
                                 </div>
                             </div>
 							
@@ -162,15 +162,16 @@
 	$(document).ready( function() {
 		$("#post_contents").Editor();
 		$("#defaultReal").realperson();
+		$("#post_contents").Editor('setText', "<?php echo $POST_INFO->POST_CONTENTS;?>");
 	})
 
 
-	function post_regist(){
+	function post_modify(){
 
 		let hash = $("#defaultReal").realperson('getHash');
 		console.log(hash);
 
-		let board_seq = <?php echo $BOARD_INFO->BOARD_SEQ?>;
+		let post_seq = <?php echo $POST_INFO->POST_SEQ?>;
 		
 		$("#defaultRealHash").val(hash);
 		$("#post_contents").val($("#post_contents").Editor("getText"));
@@ -178,7 +179,7 @@
 
 		console.log(form);
 		$.ajax({
-			url:"/admin/board/set_post_info?board_seq=" + board_seq,
+			url:"/admin/board/upt_post_info?post_seq=" + post_seq,
 			type:"post",
 			data:form,
 			dataType:"json",
@@ -187,7 +188,7 @@
 				let msg = resultMsg["msg"];
 				if(code == 200){
 					alert(msg);
-					location.href="/admin/board/post_list/" + board_seq;
+					location.href="/admin/board/post_view/" + post_seq;
 				} else {
 					alert(msg);
 				}

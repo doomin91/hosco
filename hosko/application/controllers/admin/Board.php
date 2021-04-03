@@ -215,13 +215,83 @@ class Board extends CI_Controller {
 		$this->load->view("./admin/board/post-view", $DATA);
 	}
 
+	// 게시글 등록 화면
 	public function post_write($BOARD_SEQ){
 		$DATA["BOARD_INFO"] = $this->BoardModel->getBoard($BOARD_SEQ);
 
 		$this->load->view("./admin/board/post-write", $DATA);
 	}
 
-	public function post_regist(){
+	// 게시글 수정 화면
+	public function post_modify($POST_SEQ){
+		$POST_INFO = $this->BoardModel->getBoardSeqByPost($POST_SEQ);
+		$BOARD_INFO = $this->BoardModel->getBoard($POST_INFO->POST_BOARD_SEQ);
+
+		$DATA["POST_INFO"] = $POST_INFO;
+		$DATA["BOARD_INFO"] = $BOARD_INFO;
+		$this->load->view("admin/board/post-modify", $DATA);
+	}
+
+	public function upt_post_info(){
+		$POST_SEQ = $this->input->get("post_seq");
+		$POST_SUBJECT = $this->input->post("post_title");
+		$POST_CONTENTS = $this->input->post("post_contents");
+		$POST_NOTICE_CHK = $this->input->post("post_notice_chk");
+		$POST_SECRET_CHK = $this->input->post("post_secret_chk");
+		$SPAM_CHECK = $this->rpHash($this->input->post("defaultReal"));
+		$SPAM_CHECK_HASH = $this->input->post("defaultRealHash");
+
+
+		$POST_INFO = $this->BoardModel->getBoardSeqByPost($POST_SEQ);
+		$BOARD_INFO = $this->BoardModel->getBoard($POST_INFO->POST_BOARD_SEQ);
+
+		if($BOARD_INFO->BOARD_SPAM_CHECK_FLAG == 'Y'){
+			if($SPAM_CHECK != $SPAM_CHECK_HASH){
+				$returnMsg = array(
+					"code" => 202,
+					"msg" => "자동입력방지 값이 다릅니다."
+				);
+				echo json_encode($returnMsg);
+				exit;
+			}
+		}
+
+		if(empty($POST_SUBJECT) || empty($POST_CONTENTS)){
+			$returnMsg = array(
+				"code" => 202,
+				"msg" => "값을 입력해주세요."
+			);
+			echo json_encode($returnMsg);
+			exit;
+		}
+
+		$DATA = array(
+			"POST_USER_SEQ" => $this->session->userdata("USER_SEQ"),
+			"POST_SUBJECT" => $POST_SUBJECT,
+			"POST_CONTENTS" => $POST_CONTENTS,
+			"POST_REG_IP" => $this->customclass->get_client_ip(),
+			"POST_NOTICE_YN" => isset($POST_NOTICE_CHK) ? "Y" : "N",
+			"POST_SECRET_YN" => isset($POST_SECRET_CHK) ? "Y" : "N"
+		);
+
+		$result = $this->BoardModel->uptPost($POST_SEQ, $DATA);
+		if($result){
+			$returnMsg = array(
+				"code" => 200,
+				"msg" => "수정되었습니다."
+			);
+		} else {
+			$returnMsg = array(
+				"code" => 201,
+				"msg" => "수정 실패하였습니다."
+			);
+		}
+
+		echo json_encode($returnMsg);
+	}
+
+	// 게시글 등록 함수
+	public function set_post_info(){
 		$BOARD_SEQ = $this->input->get("board_seq");
 		$POST_SUBJECT = $this->input->post("post_title");
 		$POST_CONTENTS = $this->input->post("post_contents");
@@ -318,6 +388,8 @@ class Board extends CI_Controller {
 		echo json_encode($returnMsg);
 	}
 
+	
+	// 글 추천 기능 함수 //
 	public function post_recommand(){
 		$POST_SEQ = $this->input->get("post_seq");
 		$USER_SEQ = 1;
@@ -344,6 +416,7 @@ class Board extends CI_Controller {
 		echo json_encode($resultMsg);
 	}
 
+	// 댓글 기능 함수 //
 	public function comment_regist(){
 		$POST_SEQ = $this->input->post("post_seq");
 		$COMMENT = $this->input->post("comment_content");
@@ -359,6 +432,7 @@ class Board extends CI_Controller {
 		echo json_encode($result);
 	}
 
+	// 자동 입력 방지 해쉬 함수 //
 	function rpHash($value) { 
 		$hash = 5381; 
 		$value = strtoupper($value); 

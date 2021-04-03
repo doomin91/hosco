@@ -145,7 +145,7 @@ td a {
 													<button type="button" class="btn btn-primary btn-sm"
 														id="btnRecommand">추천</button>
 													<?php endif;?>
-													<a href="/admin/board/post_list/<?php echo $BOARD_INFO->BOARD_SEQ?>"
+													<a href="/admin/board/post_modify/<?php echo $POST_INFO->POST_SEQ?>"
 														class="btn btn-primary btn-sm">수정</a>
 													<a href="/admin/board/post_list/<?php echo $BOARD_INFO->BOARD_SEQ?>"
 														class="btn btn-primary btn-sm">목록</a>
@@ -229,7 +229,7 @@ td a {
 		
 		<?php if($BOARD_INFO->BOARD_COMMENT_FLAG == 'Y'): ?>
 		$(document).ready(function () {
-			$("#comment_content").Editor();
+			// $("#comment_content").Editor();
 			CKEDITOR.replace('comment_content',
 			{
 

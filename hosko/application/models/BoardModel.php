@@ -74,6 +74,11 @@ class BoardModel extends CI_Model{
         return $this->db->insert("TBL_HOSKO_BOARD_POSTS", $DATA);
     }
 
+    public function uptPost($POST_SEQ, $DATA){
+        $this->db->where("POST_SEQ", $POST_SEQ);
+        return $this->db->update("TBL_HOSKO_BOARD_POSTS", $DATA);
+    }
+
     public function insertPostAttach($DATA){
         return $this->db->insert("TBL_HOSKO_BOARD_ATTACH", $DATA);
     }
