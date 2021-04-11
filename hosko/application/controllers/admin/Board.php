@@ -71,6 +71,14 @@ class Board extends CI_Controller {
 		$board_name_kor = $this->input->post("board_name_kor");
 		$board_group = $this->input->post("board_group");
 		$board_admin = $this->input->post("board_admin");
+		$auth = $this->input->post("auth_list") . "," . $this->input->post("auth_content") . "," . 
+			$this->input->post("auth_write") . "," . 
+			$this->input->post("auth_repost") . "," . 
+			$this->input->post("auth_reply");
+		$warn_message = $this->input->post("warn_message");
+		$redirect_url = $this->input->post("redirect_url");
+		$write_btn = $this->input->post("show_write_btn");
+		$align_img = $this->input->post("align_img");
 		$fn_secret = $this->input->post("fn_secret");
 		$fn_recommand = $this->input->post("fn_recommand");
 		$fn_viewpage = $this->input->post("fn_viewpage");
@@ -78,6 +86,8 @@ class Board extends CI_Controller {
 		$fn_reply = $this->input->post("fn_reply");
 		$file_upload = $this->input->post("file_upload");
 		$list_view = $this->input->post("list_view");
+		$new_period = $this->input->post("new_period");
+		$hot_period = $this->input->post("hot_period");
 		$ip_address = $this->customclass->get_client_ip();
 
 		$chk = $this->BoardModel->checkBoardName($board_name);
@@ -110,17 +120,24 @@ class Board extends CI_Controller {
 		}
 		
 		$DATA = array(
-		"BOARD_CATEGORY" => $board_cate,
+			"BOARD_CATEGORY" => $board_cate,
 			"BOARD_MEMO" => $board_memo,
 			"BOARD_NAME" => $board_name,
 			"BOARD_KOR_NAME" => $board_name_kor,
 			"BOARD_GROUP" => $board_group,
+			"BOARD_AUTH" => $auth,
+			"BOARD_AUTH_REDIRECT" => $warn_message, 
+			"BOARD_PERIOD_NEW" => $new_period,
+			"BOARD_PERIOD_HOT" => $hot_period,
+			"BOARD_AUTH_MSG" => $redirect_url,
 			"BOARD_ADMIN_ID" => $board_admin,
+			"BOARD_ALIGN_IMG" => $align_img,
 			"BOARD_FILEUPLOAD_COUNT" => $file_upload,
 			"BOARD_LIST_COUNT" => $list_view,
 			"BOARD_REG_IP" => $ip_address
 		);
 		
+		$DATA["BOARD_WRITE"] = $write_btn == 'Y' ? $write_btn : 'N';
 		$DATA["BOARD_SECRET_FLAG"] = $fn_secret == 'Y' ? $fn_secret : 'N';
 		$DATA["BOARD_RECOMMAND_FLAG"] =  $fn_recommand == 'Y' ? $fn_recommand : 'N';
 		$DATA["BOARD_BOTTOM_LIST_FLAG"] =  $fn_viewpage == 'Y' ? $fn_viewpage : 'N';

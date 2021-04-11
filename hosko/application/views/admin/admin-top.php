@@ -264,14 +264,15 @@
 			type:"post",
 			dataType:"json",
 			success:function(data){
+				str += "<li>&nbsp</li>";
 				$.each(data, function(index, value){
 					str += "<li>";
 					str += "<a href=\"/admin/board/post_list/" + value["BOARD_SEQ"] + "\">";
-					str += "<i class=\"fa fa-caret-right\"></i>" + value["BOARD_KOR_NAME"] + "</i>";
+					str += "<i class=\"fa fa-caret-right\"></i> " + value["BOARD_KOR_NAME"];
 					str += "</a>"
 					str += "</li>";
 				});
-
+				str += "<li>&nbsp</li>";
 				$("#boardMenu").append(str);
 			}, error:function(e){
 				console.log(e);

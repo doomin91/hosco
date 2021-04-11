@@ -119,7 +119,7 @@
 					str += "<td>" + value["BOARD_ADMIN_ID"] + "</td>";
 					str += "<td>" + value["BOARD_SECRET_FLAG"] + "</td>";
 					str += "<td>" + value["BOARD_RECOMMAND_FLAG"] + "</td>";
-					str += "<td>" + value["BOARD_BOTTOM_lIST_FLAG"] + "</td>";
+					str += "<td>" + value["BOARD_BOTTOM_LIST_FLAG"] + "</td>";
 					str += "<td>" + value["BOARD_SPAM_CHECK_FLAG"] + "</td>";
 					str += "<td>" + value["BOARD_COMMENT_FLAG"] + "</td>";
 					str += "<td>" + value["BOARD_FILEUPLOAD_COUNT"] + "</td>";
