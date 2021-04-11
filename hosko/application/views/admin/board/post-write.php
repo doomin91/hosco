@@ -54,7 +54,7 @@
                     <!-- tile body -->
                     <div class="tile-body">
 
-                        <form class="form-horizontal" role="form" id="post_write_form">
+                        <form class="form-horizontal" role="form" id="post_write_form" method="post">
                             
                             <div class="form-group">
                                 <label for="input01" class="col-sm-2 control-label">게시글 제목</label>
@@ -166,28 +166,32 @@
 
 
 	function post_regist(){
-
-		let hash = $("#defaultReal").realperson('getHash');
-		console.log(hash);
-
-		let board_seq = <?php echo $BOARD_INFO->BOARD_SEQ?>;
 		
+		let hash = $("#defaultReal").realperson('getHash');
+		let board_seq = <?php echo $BOARD_INFO->BOARD_SEQ?>;
 		$("#defaultRealHash").val(hash);
 		$("#post_contents").val($("#post_contents").Editor("getText"));
-		let form = $("#post_write_form").serializeArray();
+		
+		// var form = $("#post_write_form").serializeArray();
+		var formData = new FormData($("#post_write_form")[0]);
 
-		console.log(form);
+		<?php for($i = 0 ; $i < $BOARD_INFO->BOARD_FILEUPLOAD_COUNT; $i++){?>
+		formData.append("post_file_name<?php echo ($i+1)?>", $("#post_file_name<?php echo ($i+1)?>").prop('files')[0]);
+		<?php }	?>
+
 		$.ajax({
 			url:"/admin/board/set_post_info?board_seq=" + board_seq,
 			type:"post",
-			data:form,
+			data:formData,
 			dataType:"json",
+			processData:false,
+			contentType:false,
 			success:function(resultMsg){
 				let code = resultMsg["code"];
 				let msg = resultMsg["msg"];
 				if(code == 200){
 					alert(msg);
-					location.href="/admin/board/post_list/" + board_seq;
+					// location.href="/admin/board/post_list/" + board_seq;
 				} else {
 					alert(msg);
 				}

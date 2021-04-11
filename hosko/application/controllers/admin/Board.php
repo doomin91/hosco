@@ -316,9 +316,6 @@ class Board extends CI_Controller {
 		$POST_SECRET_CHK = $this->input->post("post_secret_chk");
 		$SPAM_CHECK = $this->rpHash($this->input->post("defaultReal"));
 		$SPAM_CHECK_HASH = $this->input->post("defaultRealHash");
-		
-
-
 		$BOARD_INFO = $this->BoardModel->getBoard($BOARD_SEQ);
 
 		if($BOARD_INFO->BOARD_SPAM_CHECK_FLAG == 'Y'){
@@ -341,42 +338,33 @@ class Board extends CI_Controller {
 			exit;
 		}
 
-        $config["upload_path"] = $_SERVER['DOCUMENT_ROOT'] . "/upload/attach/";
-        $config["allowed_types"] = "xls|xlsx|ppt|pptx|gif|jpg|png|hwp|doc|bmp|jpeg|zip|GIF|JPG|PNG|JPEG";
-        $new_name = $BOARD_INFO->BOARD_NAME . "_" . date("YmdHis");
-        $config["file_name"] = $new_name;
-        $this->load->library("upload", $config);
+		$filepath = $_SERVER['DOCUMENT_ROOT'] . "/upload/attach/";
 		
-        $post_file_name = "";
-        $post_file_path = "";
-        if (isset($_FILES['post_file_name']['name'])) {
-            if (0 < $_FILES['post_file_name']['error']) {
-                echo 'Error during file upload' . $_FILES['post_file_name']['error'];
-            } else {
-                if (file_exists('upload/attach' . $_FILES['post_file_name']['name'])) {
-                    echo 'File already exists : upload/attach' . $_FILES['post_file_name']['name'];
-                } else {
-                    $this->load->library('upload', $config);
-                    if (!$this->upload->do_upload('post_file_name')) {
-                        echo $this->upload->display_errors();
-                    } else {
-                        //echo 'File successfully uploaded : uploads/' . $_FILES['post_thumbnail']['name'];
-                        $post_file_name = $_FILES['post_file_name']['name'];
-                        $post_file_path = "/upload/attach/".$this->upload->data("file_name");
-                    }
-                }
-            }
-        } else {
-            //echo 'Please choose a file';
-        }
+        // $new_name = $BOARD_INFO->BOARD_NAME . "_" . date("YmdHis");
+        // $config["file_name"] = $new_name;
+		$i = 1;
+		foreach($_FILES as $key => $file){
+			if(!empty($file["name"])){
+				$new_name = time();
+				$filetype = end(explode(".", $file["name"]));
+				$filename = $filepath . $new_name . "." . $filetype;
+				
+				while(!file_exist($filename)){
+					$num = 1;
+				}
+				move_uploaded_file($file["tmp_name"], $filename);
 
-        $insert_arr = array(
-			"ATTACH_POST_SEQ" => $BOARD_SEQ,
-			"ATTACH_FILE_NAME" => $post_file_name,
-			"ATTACH_FILE_PATH" => $post_file_path
-		);
-
-		$result = $this->BoardModel->insertPostAttach($insert_arr);
+				$insert_arr = array(
+					"ATTACH_POST_SEQ" => $BOARD_SEQ,
+					"ATTACH_FILE_PRIORITY" => $i,
+					"ATTACH_FILE_NAME" => $file["name"],
+					"ATTACH_FILE_PATH" => $filename
+				);
+				$result = $this->BoardModel->insertPostAttach($insert_arr);
+			}
+			$i = $i + 1;
+		}
+		exit;
 
 		$DATA = array(
 			"POST_BOARD_SEQ" => $BOARD_SEQ,
@@ -405,7 +393,6 @@ class Board extends CI_Controller {
 		echo json_encode($returnMsg);
 	}
 
-	
 	// 글 추천 기능 함수 //
 	public function post_recommand(){
 		$POST_SEQ = $this->input->get("post_seq");
