@@ -19,6 +19,7 @@
     <link rel="stylesheet" href="/static/admin/js/vendor/chosen/css/chosen-bootstrap.css">
 
     <link rel="stylesheet" href="/static/admin/js/vendor/datepicker/css/bootstrap-datetimepicker.min.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
     <link href="/static/admin/css/minimal.css" rel="stylesheet">
     <link href="/static/admin/css/custom.css" rel="stylesheet">

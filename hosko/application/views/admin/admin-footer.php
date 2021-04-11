@@ -29,3 +29,5 @@
     <script src="/static/admin/js/minimal.min.js"></script>
 
     <script src="/js/editor.js"></script>
+
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
