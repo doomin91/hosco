@@ -168,14 +168,19 @@
 			</a>
 			<ul class="dropdown-menu">
 				<li>
-					<a href="#">
-						<i class="fa fa-caret-right"></i> 수속신청현황
+					<a href="/admin/recruit/recruit_abroad_list">
+						<i class="fa fa-caret-right"></i> 유학목록
 					</a>
 				</li>
 				<li>
-				  <a href="#s">
-					<i class="fa fa-caret-right"></i> 수속진행현황
-				  </a>
+					<a href="/admin/recruit/recruit_abroad_register">
+						<i class="fa fa-caret-right"></i> 유학등록하기
+					</a>
+				</li>
+				<li>
+					<a href="/admin/recruit">
+						<i class="fa fa-caret-right"></i> 수속신청현황
+					</a>
 				</li>
 				<li>
 				  <a href="#">

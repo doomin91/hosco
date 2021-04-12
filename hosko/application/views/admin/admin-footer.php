@@ -12,6 +12,7 @@
     <script type="text/javascript" src="/static/admin/js/vendor/animate-numbers/jquery.animateNumbers.js"></script>
     <script type="text/javascript" src="/static/admin/js/vendor/videobackground/jquery.videobackground.js"></script>
     <script type="text/javascript" src="/static/admin/js/vendor/blockui/jquery.blockUI.js"></script>
+    <script type="text/javascript" src="/static/admin/js/vendor/jquery-ui/jquery-ui-1.10.4.custom.min.js"></script>
 
     <script src="/static/admin/js/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="/static/admin/js/vendor/datatables/ColReorderWithResize.js"></script>
