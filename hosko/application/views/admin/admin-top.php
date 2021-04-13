@@ -59,7 +59,7 @@
 			  </a>
 			</li>
 			<li>
-			  <a href="/admin/basic/managers">
+			  <a href="/admin/basic/siteInfo">
 				<i class="fa fa-caret-right"></i> 사이트정보
 			  </a>
 			</li>

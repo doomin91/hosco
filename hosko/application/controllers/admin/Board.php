@@ -118,7 +118,7 @@ class Board extends CI_Controller {
 			echo json_encode($resultMsg);
 			exit;
 		}
-		
+
 		$DATA = array(
 			"BOARD_CATEGORY" => $board_cate,
 			"BOARD_MEMO" => $board_memo,
@@ -136,16 +136,20 @@ class Board extends CI_Controller {
 			"BOARD_LIST_COUNT" => $list_view,
 			"BOARD_REG_IP" => $ip_address
 		);
+<<<<<<< HEAD
 		
 		$DATA["BOARD_WRITE"] = $write_btn == 'Y' ? $write_btn : 'N';
+=======
+
+>>>>>>> origin/develop
 		$DATA["BOARD_SECRET_FLAG"] = $fn_secret == 'Y' ? $fn_secret : 'N';
 		$DATA["BOARD_RECOMMAND_FLAG"] =  $fn_recommand == 'Y' ? $fn_recommand : 'N';
 		$DATA["BOARD_BOTTOM_LIST_FLAG"] =  $fn_viewpage == 'Y' ? $fn_viewpage : 'N';
 		$DATA["BOARD_SPAM_CHECK_FLAG"] =  $fn_spamcheck == 'Y' ? $fn_spamcheck : 'N';
 		$DATA["BOARD_COMMENT_FLAG"] =  $fn_reply == 'Y' ? $fn_reply : 'N';
-		
+
 		$return = $this->BoardModel->writeBoard($DATA);
-		
+
 		if($return){
 			$resultMsg = array(
 				"code" => 200,
@@ -164,12 +168,12 @@ class Board extends CI_Controller {
 	///////////////////////
 	// 생성된 게시판 관리 //
 	///////////////////////
-	
+
 	public function post_list($BOARD_SEQ){
 		$BOARD_INFO = $this->BoardModel->getBoard($BOARD_SEQ);
 		$searchField = $this->input->get("searchField");
 		$searchString = $this->input->get("searchString");
-		
+
 		$limit = $BOARD_INFO->BOARD_LIST_COUNT;
         $nowpage = "";
         if (!isset($_GET["per_page"])){
@@ -212,7 +216,7 @@ class Board extends CI_Controller {
 
 		$this->load->view("./admin/board/post-list", $DATA);
 	}
-	
+
 	public function post_view($POST_SEQ){
 
 		$POST_INFO = $this->BoardModel->getBoardSeqByPost($POST_SEQ);
@@ -222,7 +226,7 @@ class Board extends CI_Controller {
 		);
 		$this->BoardModel->addPostViewCnt($POST_SEQ, $DATA);
 
-		
+
 		$DATA["COMMENTS"] = $this->BoardModel->getComments($POST_SEQ);
 		$DATA["RECOMMAND"] = $this->BoardModel->getRecommand($POST_SEQ);
 
@@ -257,6 +261,10 @@ class Board extends CI_Controller {
 		$POST_SECRET_CHK = $this->input->post("post_secret_chk");
 		$SPAM_CHECK = $this->rpHash($this->input->post("defaultReal"));
 		$SPAM_CHECK_HASH = $this->input->post("defaultRealHash");
+<<<<<<< HEAD
+=======
+
+>>>>>>> origin/develop
 
 
 		$POST_INFO = $this->BoardModel->getBoardSeqByPost($POST_SEQ);
@@ -282,6 +290,7 @@ class Board extends CI_Controller {
 			exit;
 		}
 
+<<<<<<< HEAD
 		$DATA = array(
 			"POST_USER_SEQ" => $this->session->userdata("USER_SEQ"),
 			"POST_SUBJECT" => $POST_SUBJECT,
@@ -289,6 +298,41 @@ class Board extends CI_Controller {
 			"POST_REG_IP" => $this->customclass->get_client_ip(),
 			"POST_NOTICE_YN" => isset($POST_NOTICE_CHK) ? "Y" : "N",
 			"POST_SECRET_YN" => isset($POST_SECRET_CHK) ? "Y" : "N"
+=======
+        $config["upload_path"] = $_SERVER['DOCUMENT_ROOT'] . "/upload/attach/";
+        $config["allowed_types"] = "xls|xlsx|ppt|pptx|gif|jpg|png|hwp|doc|bmp|jpeg|zip|GIF|JPG|PNG|JPEG";
+        $new_name = $BOARD_INFO->BOARD_NAME . "_" . date("YmdHis");
+        $config["file_name"] = $new_name;
+        $this->load->library("upload", $config);
+
+        $post_file_name = "";
+        $post_file_path = "";
+        if (isset($_FILES['post_file_name']['name'])) {
+            if (0 < $_FILES['post_file_name']['error']) {
+                echo 'Error during file upload' . $_FILES['post_file_name']['error'];
+            } else {
+                if (file_exists('upload/attach' . $_FILES['post_file_name']['name'])) {
+                    echo 'File already exists : upload/attach' . $_FILES['post_file_name']['name'];
+                } else {
+                    $this->load->library('upload', $config);
+                    if (!$this->upload->do_upload('post_file_name')) {
+                        echo $this->upload->display_errors();
+                    } else {
+                        //echo 'File successfully uploaded : uploads/' . $_FILES['post_thumbnail']['name'];
+                        $post_file_name = $_FILES['post_file_name']['name'];
+                        $post_file_path = "/upload/attach/".$this->upload->data("file_name");
+                    }
+                }
+            }
+        } else {
+            //echo 'Please choose a file';
+        }
+
+        $insert_arr = array(
+			"ATTACH_POST_SEQ" => $BOARD_SEQ,
+			"ATTACH_FILE_NAME" => $post_file_name,
+			"ATTACH_FILE_PATH" => $post_file_path
+>>>>>>> origin/develop
 		);
 
 		$result = $this->BoardModel->uptPost($POST_SEQ, $DATA);
@@ -436,6 +480,7 @@ class Board extends CI_Controller {
 		echo json_encode($result);
 	}
 
+<<<<<<< HEAD
 	// 자동 입력 방지 해쉬 함수 //
 	function rpHash($value) { 
 		$hash = 5381; 
@@ -461,5 +506,33 @@ class Board extends CI_Controller {
 		return ($binary{0} == "0" ? bindec($binary) : 
 			-(pow(2, 31) - bindec(substr($binary, 1)))); 
 	} 
+=======
+	function rpHash($value) {
+		$hash = 5381;
+		$value = strtoupper($value);
+		for($i = 0; $i < strlen($value); $i++) {
+			$hash = ($this->leftShift32($hash, 5) + $hash) + ord(substr($value, $i));
+		}
+		return $hash;
+	}
+
+	// Perform a 32bit left shift
+	function leftShift32($number, $steps) {
+		// convert to binary (string)
+		$binary = decbin($number);
+		// left-pad with 0's if necessary
+		$binary = str_pad($binary, 32, "0", STR_PAD_LEFT);
+		// left shift manually
+		$binary = $binary.str_repeat("0", $steps);
+		// get the last 32 bits
+		$binary = substr($binary, strlen($binary) - 32);
+		// if it's a positive number return it
+		// otherwise return the 2's complement
+		/*
+		return ($binary{0} == "0" ? bindec($binary) :
+			-(pow(2, 31) - bindec(substr($binary, 1))));
+			*/
+	}
+>>>>>>> origin/develop
 
 }

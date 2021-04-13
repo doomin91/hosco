@@ -50,6 +50,7 @@
 				<section class="tile color transparent-black">
 
 					<!-- tile body -->
+					<form name="contentsForm" id="contentsForm">
 					<div class="tile-body">
 						<table class="table table-custom dataTable userTable">
 							<colgroup>
@@ -61,19 +62,19 @@
 							<tbody>
 								<tr>
 									<th>사이트명</th>
-									<td><input type="text" name="site_name" value="" size="50"></td>
+									<td><input type="text" name="site_name" value="<?php echo $info->SITE_NAME; ?>" size="50"></td>
 									<th>사이트 URL</th>
-									<td><input type="password" name="site_url" value="" size="50"></td>
+									<td><input type="text" name="site_url" value="<?php echo $info->SITE_URL; ?>" size="50"></td>
 								</tr>
 								<tr>
 									<th>관리자 이메일</th>
-									<td><input type="text" name="site_admin_email" value="" size="50"></td>
+									<td><input type="text" name="site_admin_email" value="<?php echo $info->SITE_ADMIN_EMAIL; ?>" size="50"></td>
 									<th>관리자 연락처</th>
-									<td><input type="text" name="site_admin_tel" value="" size="50"></td>
+									<td><input type="text" name="site_admin_tel" value="<?php echo $info->SITE_ADMIN_TEL; ?>" size="50"></td>
 								</tr>
 								<tr>
 									<th>관리자 휴대폰</th>
-									<td><input type="text" name="site_admin_hp" value="" size="50"></td>
+									<td><input type="text" name="site_admin_hp" value="<?php echo $info->SITE_ADMIN_HP; ?>" size="50"></td>
 									<th>&nbsp;</th>
 									<td>&nbsp;</td>
 								</tr>
@@ -91,15 +92,15 @@
 							<tbody>
 								<tr>
 									<th>FTP 접속 주소(ip, 도메인)</th>
-									<td><input type="text" name="ftp_ip" value="" size="50"></td>
+									<td><input type="text" name="ftp_ip" value="<?php echo $info->FTP_IP; ?>" size="50"></td>
 									<th>&nbsp;</th>
 									<td>&nbsp;</td>
 								</tr>
 								<tr>
 									<th>아이디</th>
-									<td><input type="text" name="ftp_id" value="" size="50"></td>
+									<td><input type="text" name="ftp_id" value="<?php echo $info->FTP_ID; ?>" size="50"></td>
 									<th>비밀번호</th>
-									<td><input type="text" name="ftp_pw" value="" size="50"></td>
+									<td><input type="text" name="ftp_pw" value="<?php echo $info->FTP_PW; ?>" size="50"></td>
 								</tr>
 							</tbody>
 						</table>
@@ -107,7 +108,7 @@
 					<div class="tile-body">
 						<div class="row">
 							<div class="col-lg-12 text-right">
-								<button class="btn btn-default btn-xs">등록하기</button>
+								<a href="#modalDomain" role="button" class="btn btn-default btn-xs" data-toggle="modal">등록하기</a>
 							</div>
 						</div>
 						<table class="table table-custom dataTable userTable">
@@ -132,25 +133,33 @@
 								</tr>
 							</thead>
 							<tbody>
+							<?php
+								$num = 1;
+								foreach ($domains as $domain){
+							?>
 								<tr>
-									<td>1</td>
-									<td>hospitalitykorea.com</td>
-									<td>whois.co.kr</td>
-									<td>hosko</td>
-									<td>pa*********</td>
-									<td>2021-10-25</td>
+									<td><?php echo $num; ?></td>
+									<td><?php echo $domain->DOMAIN_NAME; ?></td>
+									<td><?php echo $domain->DOMAIN_BUY_SITE; ?></td>
+									<td><?php echo $domain->DOMAIN_BUY_ID; ?></td>
+									<td><?php echo substr($domain->DOMAIN_BUY_PASS, 0, 2);?>****</td>
+									<td><?php echo $domain->DOMAIN_EXPIRATION_DATE; ?></td>
 									<td>
-										<button type="button" class="btn btn-default btn-xs managerModify" data-key="">수정</button>
-										<button type="button" class="btn btn-danger btn-xs managerDelete" data-key="">삭제</button>
+										<button type="button" class="btn btn-default btn-xs domainModify" data-key="<?php echo $domain->DOMAIN_SEQ; ?>" data-json='<?php echo json_encode($domain); ?>'>수정</button>
+										<button type="button" class="btn btn-danger btn-xs domainDelete" data-key='<?php echo $domain->DOMAIN_SEQ; ?>'>삭제</button>
 									</td>
 								</tr>
+							<?php
+									$num++;
+								}
+							?>
 							</tbody>
 						</table>
 					</div>
 					<div class="tile-body">
 						<div class="row">
 							<div class="col-lg-12 text-right">
-								<button class="btn btn-default btn-xs">등록하기</button>
+								<a href="#modalEmail" role="button" class="btn btn-default btn-xs" data-toggle="modal">등록하기</a>
 							</div>
 						</div>
 						<table class="table table-custom dataTable userTable">
@@ -173,17 +182,25 @@
 								</tr>
 							</thead>
 							<tbody>
+							<?php
+								$num2 = 1;
+								foreach ($emails as $email){
+							?>
 								<tr>
-									<td>1</td>
-									<td>hosko@hospitalitykorea.com</td>
-									<td>hosko</td>
-									<td>hosko</td>
-									<td>pa*********</td>
+									<td><?php echo $num2; ?></td>
+									<td><?php echo $email->EMAIL_ADDR; ?></td>
+									<td><?php echo $email->EMAIL_USER; ?></td>
+									<td><?php echo $email->EMAIL_ID; ?></td>
+									<td><?php echo substr($email->EMAIL_PASS, 0, 2);?>****</td>
 									<td>
-										<button type="button" class="btn btn-default btn-xs managerModify" data-key="">수정</button>
-										<button type="button" class="btn btn-danger btn-xs managerDelete" data-key="">삭제</button>
+										<button type="button" class="btn btn-default btn-xs emailModify" data-key="<?php echo $email->EMAIL_SEQ; ?>"data-json='<?php echo json_encode($email); ?>'>수정</button>
+										<button type="button" class="btn btn-danger btn-xs emailDelete" data-key="<?php echo $email->EMAIL_SEQ; ?>">삭제</button>
 									</td>
 								</tr>
+							<?php
+									$num2++;
+								}
+							?>
 							</tbody>
 						</table>
 					</div>
@@ -198,20 +215,20 @@
 							<tbody>
 								<tr>
 									<th>사업자 등록번호</th>
-									<td><input type="text" name="comp_num" value="" size="50"></td>
+									<td><input type="text" name="comp_num" value="<?php echo $info->COMP_NUM; ?>" size="50"></td>
 									<th>&nbsp;</th>
 									<td>&nbsp;</td>
 								</tr>
 								<tr>
 									<th>업체명</th>
-									<td><input type="text" name="comp_name" value="" size="50"></td>
+									<td><input type="text" name="comp_name" value="<?php echo $info->COMP_NAME; ?>" size="50"></td>
 									<th>대표자명</th>
-									<td><input type="text" name="comp_ceo_name" value="" size="50"></td>
+									<td><input type="text" name="comp_ceo_name" value="<?php echo $info->COMP_CEO_NAME; ?>" size="50"></td>
 								</tr>
 								<tr>
 									<th>우편번호</th>
 									<td>
-										<input type="text" name="comp_zip" id="comp_zip" value="" size="50">
+										<input type="text" name="comp_zip" id="comp_zip" value="<?php echo $info->COMP_ZIP_CODE; ?>" size="50">
 										<button class="btn btn-default btn-sm" id="searchZip">우편번호 검색</button>
 									</td>
 									<th>&nbsp;</th>
@@ -219,32 +236,31 @@
 								</tr>
 								<tr>
 									<th>주소</th>
-									<td><input type="text" name="comp_addr" id="comp_addr" value="" size="100"></td>
+									<td><input type="text" name="comp_addr" id="comp_addr" value="<?php echo $info->COMP_ADDR; ?>" size="100"></td>
 									<th>&nbsp;</th>
 									<td>&nbsp;</td>
 								</tr>
 								<tr>
 									<th>업태</th>
-									<td><input type="text" name="comp_cate1" value="" size="50"></td>
+									<td><input type="text" name="comp_cate1" value="<?php echo $info->COMP_CATE1; ?>" size="50"></td>
 									<th>종목</th>
-									<td><input type="text" name="comp_cate2" value="" size="50"></td>
+									<td><input type="text" name="comp_cate2" value="<?php echo $info->COMP_CATE2; ?>" size="50"></td>
 								</tr>
 								<tr>
 									<th>전화번호</th>
-									<td><input type="text" name="comp_tel" value="" size="50"></td>
+									<td><input type="text" name="comp_tel" value="<?php echo $info->COMP_TEL; ?>" size="50"></td>
 									<th>팩스번호</th>
-									<td><input type="text" name="comp_fax" value="" size="50"></td>
+									<td><input type="text" name="comp_fax" value="<?php echo $info->COMP_FAX; ?>" size="50"></td>
 								</tr>
 							</tbody>
 						</table>
 						 <div class="row form-footer">
                             <div class="col-sm-offset-2 col-sm-10 text-right">
-                                <a href="/admin/basic/managers" class="btn btn-default btn-sm">취소</a>
-                                <button type="button" class="btn btn-primary btn-sm" id="saveManager">저장</a>
+                                <button type="button" class="btn btn-primary btn-sm" id="saveInfo">저장</button>
                             </div>
                         </div>
 					</div>
-
+					</form>
 				  <!-- /tile body -->
 
 				</section>
@@ -267,6 +283,94 @@
 
 	</div>
 	<!-- Wrap all page content end -->
+	<!-- 모달 팝업 -->
+	<div class="modal fade" id="modalDomain" tabindex="-1" role="dialog" aria-labelledby="modalConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">Close</button>
+					<h3 class="modal-title" id="modalConfirmLabel">도메인 정보</h3>
+				</div>
+				<div class="modal-body">
+					<form role="form">
+					<input type="hidden" name="mode">
+					<input type="hidden" name="domain_seq">
+						<div class="form-group">
+							<label for="domain">도메인</label>
+							<input type="text" class="form-control" id="domain" name="domain">
+						</div>
+
+						<div class="form-group">
+							<label for="buy_site">도메인 구입 사이트</label>
+							<input type="text" class="form-control" id="buy_site" name="buy_site">
+						</div>
+
+						<div class="form-group">
+							<label for="buy_site_id">도메인 사이트 아이디</label>
+							<input type="text" class="form-control" id="buy_site_id" name="buy_site_id">
+						</div>
+
+						<div class="form-group">
+							<label for="buy_site_pass">도메인 사이트 비밀번호</label>
+							<input type="text" class="form-control" id="buy_site_pass" name="buy_site_pass">
+						</div>
+
+						<div class="form-group">
+							<label for="expiration_date">도메인  만료일</label>
+							<input type="text" class="form-control datepicker" id="expiration_date" name="expiration_date">
+						</div>
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-red" data-dismiss="modal" aria-hidden="true">취소</button>
+					<button id="saveDomain" class="btn btn-green">저장하기</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
+
+
+	<div class="modal fade" id="modalEmail" tabindex="-1" role="dialog" aria-labelledby="modalConfirmLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">Close</button>
+					<h3 class="modal-title" id="modalConfirmLabel">이메일 정보</h3>
+				</div>
+				<div class="modal-body">
+					<form name="eForm" role="form">
+					<input type="hidden" name="email_mode">
+					<input type="hidden" name="email_seq">
+						<div class="form-group">
+							<label for="email_addr">이메일</label>
+							<input type="text" class="form-control" id="email_addr" name="email_addr">
+						</div>
+
+						<div class="form-group">
+							<label for="email_user">사용자명</label>
+							<input type="text" class="form-control" id="email_user" name="email_user">
+						</div>
+
+						<div class="form-group">
+							<label for="email_id">아이디</label>
+							<input type="text" class="form-control" id="email_id" name="email_id">
+						</div>
+
+						<div class="form-group">
+							<label for="email_pass">비밀번호</label>
+							<input type="text" class="form-control" id="email_pass" name="email_pass">
+						</div>
+
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button class="btn btn-red" data-dismiss="modal" aria-hidden="true">취소</button>
+					<button id="saveEmail" class="btn btn-green">저장하기</button>
+				</div>
+			</div><!-- /.modal-content -->
+		</div><!-- /.modal-dialog -->
+	</div><!-- /.modal -->
 
 	<?php
 		include_once dirname(__DIR__)."/admin-footer.php";
@@ -281,6 +385,197 @@
 </html>
 <script type="text/javascript">
 	$(function(){
+		$.datepicker.setDefaults({
+	        dateFormat: 'yy-mm-dd',
+	        prevText: '이전 달',
+	        nextText: '다음 달',
+	        monthNames: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+	        monthNamesShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+	        dayNames: ['일', '월', '화', '수', '목', '금', '토'],
+	        dayNamesShort: ['일', '월', '화', '수', '목', '금', '토'],
+	        dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'],
+	        showMonthAfterYear: true,
+	        yearSuffix: '년',
+	        color: "black"
+	    });
+		$(".datepicker").datepicker();
+
+		$(document).on("click", "#saveDomain", function(){
+			var domain = $("input[name=domain]").val();
+			var buy_site = $("input[name=buy_site]").val();
+			var buy_site_id = $("input[name=buy_site_id]").val();
+			var buy_site_pass = $("input[name=buy_site_pass]").val();
+			var expiration_date = $("input[name=expiration_date]").val();
+			var mode = $("input[name=mode]").val();
+			var domain_seq = $("input[name=domain_seq]").val();
+
+			if (domain == ""){
+				alert("도메인을 입력해주세요");
+				return false;
+			}
+
+			if (buy_site == ""){
+				alert("도메인 구입 사이트를 입력해주세요");
+				return false;
+			}
+
+			$.ajax({
+				url:"/admin/Basic/setDomain",
+				type:"post",
+				dataType:"json",
+				data : {
+					"domain" : domain,
+					"buy_site" : buy_site,
+					"buy_site_id" : buy_site_id,
+					"buy_site_pass" : buy_site_pass,
+					"expiration_date" : expiration_date,
+					"mode" : mode,
+					"domain_seq" : domain_seq
+				}, success:function(data){
+					if (data.code == "200"){
+						alert(data.msg);
+						//$("#modalDomain").modal("hide");
+						document.location.reload();
+					}
+				}, error:function(e){
+					console.log(e);
+				}
+			})
+		});
+
+		$(document).on("click", ".domainModify", function(){
+			var domain_data = $(this).data("json");
+
+			//console.log(domain_data);
+			$("input[name=mode]").val("modify");
+			$("input[name=domain_seq]").val(domain_data.DOMAIN_SEQ);
+			$("input[name=domain]").val(domain_data.DOMAIN_NAME);
+			$("input[name=buy_site]").val(domain_data.DOMAIN_BUY_SITE);
+			$("input[name=buy_site_id]").val(domain_data.DOMAIN_BUY_ID);
+			$("input[name=buy_site_pass]").val(domain_data.DOMAIN_BUY_PASS);
+			$("input[name=expiration_date]").val(domain_data.DOMAIN_EXPIRATION_DATE);
+
+			$("#modalDomain").modal("show");
+		});
+
+		$(document).on("click", ".domainDelete", function(){
+			var domain_seq = $(this).data("key");
+			if (confirm("도매인 정보를 삭제하시겠습니까?")){
+				$.ajax({
+					url:"/admin/Basic/deleteDomain",
+					type:"post",
+					dataType:"json",
+					data : {
+						"domain_seq" : domain_seq
+					}, success:function(data){
+						if (data.code == "200"){
+							alert(data.msg);
+							//$("#modalDomain").modal("hide");
+							document.location.reload();
+						}
+					}, error:function(e){
+						console.log(e);
+					}
+				})
+			}
+		});
+
+		$(document).on("click", "#saveEmail", function(){
+			var email_addr = $("input[name=email_addr]").val();
+			var email_user = $("input[name=email_user]").val();
+			var email_id = $("input[name=email_id]").val();
+			var email_pass = $("input[name=email_pass]").val();
+			var email_mode = $("input[name=email_mode]").val();
+			var email_seq = $("input[name=email_seq]").val();
+
+			if (email_addr == ""){
+				alert("이메일 주소를 입력해주세요");
+				return false;
+			}
+
+			if (email_user == ""){
+				alert("이메일 유저를 입력해주세요");
+				return false;
+			}
+
+			$.ajax({
+				url:"/admin/Basic/setEmail",
+				type:"post",
+				dataType:"json",
+				data : {
+					"email_addr" : email_addr,
+					"email_user" : email_user,
+					"email_id" : email_id,
+					"email_pass" : email_pass,
+					"email_mode" : email_mode,
+					"email_seq" : email_seq
+				}, success:function(data){
+					if (data.code == "200"){
+						alert(data.msg);
+						//$("#modalDomain").modal("hide");
+						document.location.reload();
+					}
+				}, error:function(e){
+					console.log(e);
+				}
+			})
+		});
+
+		$(document).on("click", ".emailModify", function(){
+			var email_data = $(this).data("json");
+
+			$("input[name=email_mode]").val("modify");
+			$("input[name=email_addr]").val(email_data.EMAIL_ADDR);
+			$("input[name=email_user]").val(email_data.EMAIL_USER);
+			$("input[name=email_id]").val(email_data.EMAIL_ID);
+			$("input[name=email_pass]").val(email_data.EMAIL_PASS);
+			$("input[name=email_seq]").val(email_data.EMAIL_SEQ);
+
+			$("#modalEmail").modal("show");
+		});
+
+		$(document).on("click", ".emailDelete", function(){
+			var email_seq = $(this).data("key");
+			if (confirm("이메일 정보를 삭제하시겠습니까?")){
+				$.ajax({
+					url:"/admin/Basic/deleteEmail",
+					type:"post",
+					dataType:"json",
+					data : {
+						"email_seq" : email_seq
+					}, success:function(data){
+						if (data.code == "200"){
+							alert(data.msg);
+							//$("#modalDomain").modal("hide");
+							document.location.reload();
+						}
+					}, error:function(e){
+						console.log(e);
+					}
+				})
+			}
+		});
+
+		$(document).on("click", "#saveInfo", function(){
+			var formData = $("#contentsForm").serialize();
+
+			$.ajax({
+				url:"/admin/Basic/setInfo",
+				type:"post",
+				dataType:"json",
+				data : formData,
+				success:function(data){
+					console.log(data);
+					if (data.code == "200"){
+						alert(data.msg);
+						//$("#modalDomain").modal("hide");
+						document.location.reload();
+					}
+				}, error:function(e){
+					console.log(e);
+				}
+			})
+		});
 
 		$(document).on("click", "#searchZip", function(){
 			sample2_execDaumPostcode();
@@ -290,7 +585,6 @@
 			console.log("asdfasdfsadf");
 			closeDaumPostcode();
 		});
-
 
 		// 우편번호 찾기 화면을 넣을 element
 		var element_layer = document.getElementById('layer');
